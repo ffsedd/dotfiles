@@ -1,11 +1,13 @@
-! Clear existing Lock modifier
+! Clear Lock modifier (Caps Lock)
 clear Lock
+
+! Make Insert the Compose key
+keycode 118 = Multi_key
 
 ! Remap Caps Lock (keycode 66) to Hyper_L
 keycode 66 = Hyper_L
 
-! Remove Hyper_L from any old modifier and add it to Mod4
-remove Lock
+! Remove Hyper_L from old modifiers and add it to Mod4
 remove Mod4 = Hyper_L
 add Mod4 = Hyper_L
 
