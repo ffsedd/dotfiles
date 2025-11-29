@@ -1,25 +1,39 @@
 #!/usr/bin/env python3
-import os
+import logging
 import sys
 from pathlib import Path
 
-# script directory = dotfiles base
+# ============================
+# Setup logging
+# ============================
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logger = logging.getLogger(__name__)
+
+# ============================
+# Dotfiles paths
+# ============================
 dotfiledir = Path(__file__).resolve().parent
 homedir = dotfiledir / "home"
 home = Path.home()
 
 if not homedir.exists():
-    print(f"Directory {homedir} does not exist. Aborting.")
+    logger.error(f"Directory {homedir} does not exist. Aborting.")
     sys.exit(1)
 
-def symlink(src: Path, dest: Path):
+
+# ============================
+# Functions
+# ============================
+def symlink(src: Path, dest: Path) -> None:
     if dest.exists() or dest.is_symlink():
         dest.unlink()
+        logger.debug(f"Removed existing file/symlink: {dest}")
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.symlink_to(src)
-    print(f"Created symlink: {dest} → {src}")
+    logger.info(f"Created symlink: {dest} → {src}")
 
-def install_dir(src_dir: Path, dest_dir: Path):
+
+def install_dir(src_dir: Path, dest_dir: Path) -> None:
     for item in src_dir.iterdir():
         dest_item = dest_dir / item.name
         if item.is_dir():
@@ -27,6 +41,9 @@ def install_dir(src_dir: Path, dest_dir: Path):
         else:
             symlink(item, dest_item)
 
-install_dir(homedir, home)
-print(f"{__file__} Installation Complete!")
 
+# ============================
+# Run installation
+# ============================
+install_dir(homedir, home)
+logger.info(f"{__file__} Installation Complete!")
